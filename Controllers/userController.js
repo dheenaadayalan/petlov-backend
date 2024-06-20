@@ -199,3 +199,19 @@ export const deletePet = async (req, res) => {
     });
   }
 };
+
+export const allPets = async (req,res)=>{
+  try {
+    const allPetsData = await pets.find();
+    res.json({
+      data:allPetsData,
+      success: true,
+    })
+  } catch (error) {
+    res.json({
+      message: "Internal Server error in loading the pet",
+      error: error,
+      success: false,
+    });
+  }
+}
