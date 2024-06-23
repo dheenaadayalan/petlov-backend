@@ -4,6 +4,7 @@ import jwt from "jsonwebtoken";
 
 import dotenv from "dotenv";
 import petOwner from "../Models/petOwnerModel.js";
+import Feedback from "../Models/feedback.js";
 dotenv.config();
 
 export const sigUp = async (req, res, next) => {
@@ -11,9 +12,10 @@ export const sigUp = async (req, res, next) => {
   const hashedPassword = bcryptjs.hashSync(password, 10);
   const newUser = new User({ username, email, password: hashedPassword });
   try {
-    console.log(newUser);
     await newUser.save();
     const userDetail = await User.findOne({ email });
+    const newFeedBack = new Feedback({userId:userDetail._id})
+    await newFeedBack.save()
     const userPassword = bcryptjs.compareSync(password, userDetail.password);
     if (!userDetail || !userPassword) {
       return res.json({

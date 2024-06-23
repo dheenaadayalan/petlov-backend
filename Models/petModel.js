@@ -29,10 +29,14 @@ const petsSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  catorgry:{
-    type:Array,
+  catorgry: {
+    type: Array,
     required: true,
-  }
+  },
+  address: {
+    type: String,
+    required: true,
+  },
 });
 
 const pets = mongoose.model("Pets", petsSchema);

@@ -3,6 +3,8 @@ import pets from "../Models/petModel.js";
 import petOwner from "../Models/petOwnerModel.js";
 import User from "../Models/userModel.js";
 import jwt from "jsonwebtoken";
+import Message from "../Models/message.js";
+import Feedback from "../Models/feedback.js";
 
 export const petOwnerSignup = async (req, res, next) => {
   const { username, email, address, dob, isPetOwner } = req.body;
@@ -89,17 +91,20 @@ export const addPet = async (req, res) => {
   const petOwnerId = req.user.idPet;
   const { name, personality, behavior, requirements, petPictures, catorgry } =
     req.body;
-  const newPet = new pets({
-    name,
-    personality,
-    behavior,
-    requirements,
-    petPictures,
-    catorgry,
-    petOwnerId: petOwnerId,
-  });
+
   try {
     const userPetDetail = await petOwner.findById(petOwnerId);
+    const address = userPetDetail.address;
+    const newPet = new pets({
+      name,
+      personality,
+      behavior,
+      requirements,
+      petPictures,
+      catorgry,
+      petOwnerId: petOwnerId,
+      address: address,
+    });
     const userPets = userPetDetail.pets;
     const newPetDoc = await newPet.save();
     const petId = newPetDoc._id;
@@ -200,13 +205,13 @@ export const deletePet = async (req, res) => {
   }
 };
 
-export const allPets = async (req,res)=>{
+export const allPets = async (req, res) => {
   try {
     const allPetsData = await pets.find();
     res.json({
-      data:allPetsData,
+      data: allPetsData,
       success: true,
-    })
+    });
   } catch (error) {
     res.json({
       message: "Internal Server error in loading the pet",
@@ -214,4 +219,107 @@ export const allPets = async (req,res)=>{
       success: false,
     });
   }
+};
+
+export const sendMessage = async (req, res) => {
+  const {
+    email,
+    fromId,
+    message,
+    number,
+    address,
+    meetingTime,
+    petId,
+    petOwnerId,
+    petName,
+  } = req.body;
+  const userPetDetail = await petOwner.findById(petOwnerId);
+  const newMessage = new Message({
+    email,
+    fromId,
+    message,
+    number,
+    address,
+    meetingTime,
+    petId,
+    petOwnerId,
+    petName,
+  });
+  try {
+    const newmessageDoc = await newMessage.save();
+    const userPetsMessage = userPetDetail.message;
+    userPetsMessage.push(newmessageDoc);
+    await petOwner.findByIdAndUpdate(petOwnerId, {
+      message: userPetsMessage,
+    });
+    const userFeedBack = await Feedback.findOne({ userId:fromId });
+    res.json({
+      message: "Message sent to the owner",
+      success: true,
+      feedback:userFeedBack
+    });
+  } catch (error) {
+    res.json({
+      message: "Internal Server error in sending message",
+      error: error,
+      success: false,
+    });
+  }
+};
+
+export const addFeedBack = async (req,res)=>{
+  const {userId, feedback} = req.body;
+  const userFeedBack = await Feedback.findOne({ userId });
+  try {
+    await Feedback.findByIdAndUpdate(userFeedBack._id, {
+      feedback: feedback,
+      isFeedBackGiven:true,
+    });
+    res.json({
+      message:"Feedback add successfully",
+      success: true,
+    })
+  } catch (error) {
+    res.json({
+      message: "Internal Server error in sending feedback",
+      error: error,
+      success: false,
+    });
+  }
+}
+
+export const allHomePets = async(req,res)=>{
+  try {
+    const PetsData = await pets.find();
+    const allPetsData = PetsData.slice(0,4)
+   
+    res.json({
+      data: allPetsData,
+      success: true,
+    });
+  } catch (error) {
+    res.json({
+      message: "Internal Server error in loading the pet",
+      error: error,
+      success: false,
+    });
+  }
+}
+
+export const getAllMessage = async (req,res)=>{
+  const petOwnerId = req.user.idPet;
+  try {
+    const allMessage = await Message.find({petOwnerId})
+    res.json({
+      message: allMessage,
+      success: true,
+    });
+  } catch (error) {
+    res.json({
+      message: "Internal Server error in loading message",
+      error: error,
+      success: false,
+    });
+  }
+  
 }
