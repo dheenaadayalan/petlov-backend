@@ -14,6 +14,7 @@ import {
   petData,
   petOwnerSignup,
   sendMessage,
+  updateProfile,
 } from "../Controllers/userController.js";
 import { isPetOwner } from "../Middleware/isPetOwner.js";
 
@@ -32,5 +33,6 @@ userRouter.post("/send/message", verifyToken, sendMessage);
 userRouter.post("/feedback", verifyToken, addFeedBack);
 userRouter.get("/pets/home/all",allHomePets);
 userRouter.get("/get/all/petowner/message", verifyToken,isPetOwner,getAllMessage);
+userRouter.post("/update/profile", verifyToken, updateProfile);
 
 export default userRouter;

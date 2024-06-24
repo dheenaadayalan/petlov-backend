@@ -323,3 +323,25 @@ export const getAllMessage = async (req,res)=>{
   }
   
 }
+
+export const updateProfile = async (req,res)=>{
+  const userid = req.user.id;
+  const {profilePicture} = req.body;
+  try {
+    await User.findByIdAndUpdate(userid, {
+      profilePicture 
+    });
+    const userDetail = await User.findById(userid);
+    res.json({
+      message: "Updated profile pic",
+      data:userDetail,
+      success: true,
+    });
+  } catch (error) {
+    res.json({
+      message: "Internal Server error in updating profile pic",
+      error: error,
+      success: false,
+    });
+  }
+}
