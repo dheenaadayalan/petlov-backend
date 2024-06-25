@@ -19,7 +19,7 @@ app.use(
 );
 
 app.get("/", (req, res) => {
-  res.status(200).send("Hi welcome to ForgetPassword API");
+  res.status(200).send("Hi welcome to PetLov API");
 });
 
 app.use("/api/auth",AuthRouter)
