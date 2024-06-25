@@ -40,11 +40,10 @@ To set up the project on your local machine, follow these steps:
 
 
 ## Usage
-```markdown
 - **Endpoints**: Utilize the provided API endpoints to interact with the backend. Refer to the API documentation for detailed information on each endpoint.
 - **Authentication**: Ensure users are authenticated before accessing restricted resources. Implement user login and registration functionality.
 - **Data Management**: Perform CRUD operations to manage pet profiles and adoption listings effectively.
-```
+
 ## API Documentation
 The API documentation provides detailed information about each endpoint, including request parameters, responses, and examples. You can access the documentation at `http://localhost:4000/api-docs`.
 
